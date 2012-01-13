@@ -1,0 +1,8 @@
+osCommerce Bitcoin Payment Module v0.5
+pulled from http://addons.oscommerce.com/info/8170 by phoenix.x742 / 2 Oct 2011
+
+Installation:
+
+Move files into osCommerce installation root.  
+
+Enable in payment modules and enter your bitcoind RPC information.
