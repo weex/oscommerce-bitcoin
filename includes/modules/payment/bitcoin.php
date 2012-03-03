@@ -15,6 +15,7 @@
       $this->title       = MODULE_PAYMENT_BITCOIN_TEXT_TITLE;
       $this->description = MODULE_PAYMENT_BITCOIN_TEXT_DESCRIPTION;
       $this->sort_order  = MODULE_PAYMENT_BITCOIN_SORT_ORDER;
+      $this->notification_key     = MODULE_PAYMENT_BITCOIN_NOTIFICATION_KEY;
       $this->enabled     = (MODULE_PAYMENT_BITCOIN_STATUS == 'True');
 
       if ((int) MODULE_PAYMENT_BITCOIN_ORDER_STATUS_ID > 0) {
@@ -147,6 +148,7 @@
       tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Username', 'MODULE_PAYMENT_BITCOIN_LOGIN', '', 'The Username for Bitcoin RPC', '6', '0', now())");
       tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Password', 'MODULE_PAYMENT_BITCOIN_PASSWORD', '', 'The Password for Bitcoin RPC', '6', '0', now())");
       tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort order of display.', 'MODULE_PAYMENT_BITCOIN_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '0', now())");
+      tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Notification Key', 'MODULE_PAYMENT_BITCOIN_NOTIFICATION_KEY', '" . tep_create_random_value(32) . "', 'Notification key authenticates python script to update order status on payment received.', '7', '0', now())");
     //tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Payment Zone', 'MODULE_PAYMENT_BITCOIN_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '2', 'tep_get_zone_class_title', 'tep_cfg_pull_down_zone_classes(', now())");
       tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Order Status', 'MODULE_PAYMENT_BITCOIN_ORDER_STATUS_ID', '0', 'Set the status of orders made with this payment module to this value', '6', '0', 'tep_cfg_pull_down_order_statuses(', 'tep_get_order_status_name', now())");
     }
@@ -161,6 +163,7 @@
               //'MODULE_PAYMENT_BITCOIN_ZONE', 
                 'MODULE_PAYMENT_BITCOIN_ORDER_STATUS_ID', 
                 'MODULE_PAYMENT_BITCOIN_SORT_ORDER', 
+                'MODULE_PAYMENT_BITCOIN_NOTIFICATION_KEY', 
                 'MODULE_PAYMENT_BITCOIN_HOST', 
                 'MODULE_PAYMENT_BITCOIN_LOGIN', 
                 'MODULE_PAYMENT_BITCOIN_PASSWORD');
