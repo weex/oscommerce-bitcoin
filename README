@@ -1,8 +1,56 @@
-osCommerce Bitcoin Payment Module v0.5
-pulled from http://addons.oscommerce.com/info/8170 by phoenix.x742 / 2 Oct 2011
+osCommerce Bitcoin Payment Module v0.6
+
+This module enables your osCommerce webstore to accept Bitcoin. 
+
+Features:
+
+* Bitcoind and monitor.py can be run on a server other than the osCommerce hosting server
+* Creates a unique payment address for each order
+* Updates order to Delivered when payment is received (# of confirmations is configurable)
+* Forwards Bitcoins to forwarding address once the local bitcoind has more than a threshold amount
+* Python script monitors bitcoind and will restart it if it becomes unresponsive
+
+Requirements:
+
+osCommerce (tested so far only with v2.3.1)
+Python with modules: MySQLdb and simplejson
+bitcoind
 
 Installation:
 
-Move files into osCommerce installation root.  
+1. Copy all files into your osCommerce installation
 
-Enable in payment modules and enter your bitcoind RPC information.
+2. Enable Bitcoin Payment module
+
+3. Fill in bitcoind RPC host:port, user, and password
+
+4. Create BTC currency in osCommerce administration -> Localization -> Currencies with the following settings. For Value enter # of 
+BTC a USD would buy you.
+
+Title: Bitcoin
+Code: BTC
+Symbol Left:
+Symbol Right: BTC
+Decimal Point: .
+Thousands Point: ,
+Decimal Places: 3
+
+5. Move ./script folder to your preferred location for Python scripts (preferably outside the web root)
+
+6. Copy ./script/default_settings.py to ./script/settings.py and configure at least BASE_PATH and OSC_URL
+
+7. Make sure bitcoind is running and has an rpcuser and rpcpassword set in .bitcoin/bitcoin.conf
+
+8. Start monitor.py:
+
+    monitor.py &
+
+You can 'tail -f ./scripts/monitor.log' to follow what the monitor script is doing.
+
+Todo:
+
+* Include BTCUSD exchange rate update in python script
+* Include a watchdog script to make sure monitor.py is running via cronjob.
+
+Inspired by http://addons.oscommerce.com/info/8170 by phoenix.x742 / 2 Oct 2011
+bpn.php modified from an osCommerce Paypal IPN script
