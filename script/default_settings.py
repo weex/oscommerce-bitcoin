@@ -4,7 +4,17 @@
 #  settings.py - settings for simple merchant script 
 #
 
-#  osCommerce database information
+#  The path to the script without trailing slash
+#    for example monitor.py would be at /path/to/this/script/monitor.py
+#    if BASE_PATH = "/path/to/this/script"
+BASE_PATH = "/path/to/this/script"   
+
+
+#
+#  OS Commerce section
+#
+
+#  Database information
 DBHOST = 'localhost'
 DBUSER = ''
 DBPASSWD = ''
@@ -15,14 +25,25 @@ DBNAME = 'oscommerce'
 #  (i.e. the Internet)
 OSC_URL = 'http://localhost/oscommerce/catalog'
 
+
+#
+#  Bitcoin section
+#
+
+#  Minimum confirmations to consider a payment received
+MINCONF = 6
+
+#  The time in seconds to wait between attempts to process incoming payments
+#  With each confirmation taking on average 10 minutes, settings this to
+#  MINCONF * 150 is reasonable (25% of expected confirmation time).
+REFRESH_PERIOD = 900
+
 #  If a forwarding address is set, the script will send all bitcoins to
 #  this address once 6 confirmations have elapsed.
 FORWARDING_ADDRESS = ''
 
-#  The path to the script without trailing slash
-#    for example monitor.py would be at /path/to/this/script/monitor.py
-#    if BASE_PATH = "/path/to/this/script"
-BASE_PATH = "/path/to/this/script"   
+#  This script will only forward payments if more than this amount has been received
+FORWARDING_MINIMUM = 1
 
-#  The time in seconds to wait before checking bitcoind again.
-REFRESH_PERIOD = 30
+#  Leave this amount on this machine
+FORWARDING_KEEP_LOCAL = 0

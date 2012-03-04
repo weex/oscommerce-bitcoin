@@ -40,7 +40,7 @@ class Daemon :
 			os.system("kill -9 `ps -ef | grep bitcoind | grep -v grep | awk '{print $2}'`")
 			os.system("bitcoind &")
 			logger.warning('Restarted bitcoind')
-			sleep(60)
+			sleep(300)  # wait a bit on the long side for more reliability
 
 	def list_addresses(self):
 		command = self.bitcoind_command[:]
@@ -61,7 +61,15 @@ class Daemon :
 		command.extend(['getreceivedbyaddress',address,str(minconf)])
 		p = Popen(command, stdout=PIPE)
 		io = p.communicate()[0]
-		return json.loads(io)
+		return Decimal(str(json.loads(io)))
+
+	def get_balance(self,minconf):
+		command = self.bitcoind_command[:]
+		command.extend(['getbalance','*',str(minconf)])
+		p = Popen(command, stdout=PIPE)
+		io = p.communicate()[0]
+		return Decimal(str(json.loads(io)))
+	
 
 	def send(self,address,amount):
 		command = self.bitcoind_command[:]
@@ -112,19 +120,21 @@ class Sales :
 			if "Total:" == order['title'] :
 				t = re.search(r"\d+\.\d+",order['text'])
 				if t:
-					total = Decimal(t.group())
+					total = Decimal(str(t.group()))
 			
 				# get address
 				a = re.search(r"[A-Za-z0-9]{28,}",order['comments'])
 				if a:
 					address = a.group()
 
-					print "Check for " + str(total) + " BTC to be sent to " + address
-					print d.get_receivedbyaddress(address,0)
-					if( d.get_receivedbyaddress(address,0) >= total ):
+					logger.info("Check for " + str(total) + " BTC to be sent to " + address)
+					received = d.get_receivedbyaddress(address,MINCONF)
+					logger.info("Amount still needed: " + str(total - received) )
+					if( received >= total ):
+						logger.info("Received " + str(received) + " BTC at " + address + " for orders_id = " + str(order['orders_id']))
 						# ping bpn.php which should be via ssl or through the same server
-						
 						url = OSC_URL + '/ext/modules/payment/bitcoin/bpn.php'
+						logger.info("sending bpn request to "+url)
 						values = {'bpn_key' : notification_key ,
 							  'orders_id' : order['orders_id'] }
 						data = urllib.urlencode(values)
@@ -132,17 +142,6 @@ class Sales :
 						response = urllib2.urlopen(req)					
 						#print "paid!"		
 
-#                txlist = d.get_transactions(100)
- #               for tx in txlist:
-  #                      if( tx['category'] != 'receive' ): continue
-                        
-			#print "%s %s %s" % (tx['txid'], tx['amount'], tx['confirmations'])
-   #                     c.execute("""INSERT INTO deposit (txid, address, amount, created, confirmations)
- #                                                       VALUES ('%s','%s', %f, now(), %d)
-
-#						ON DUPLICATE KEY UPDATE confirmations = %d"""
-  #                                                                      % ( tx['txid'], tx['address'], tx['amount'], tx['confirmations'], tx['confirmations'], ) )
-#			self.db.commit()
 
 
 if __name__ == "__main__":
@@ -150,20 +149,19 @@ if __name__ == "__main__":
 
 	d = Daemon()
 	s = Sales()
-#	while(1):
-	d.check()
+	while(1):
+		d.check()
 
 		# log all deposits
-	s.enter_deposits()
+		s.enter_deposits()
 
-	
-		# check pending addresses
-		#  since addresses will be reused, we want to make sure we do
-		#  not mistakenly allow an old transaction to unlock a download
-		#  if we assume all addresses in the pool have been used before
-		#  then we are safe as long as we only check the last 
-		#  address_count - pending_count transactions. We subtract 1 
-		#  as a small cushion.
-		#s.create_orders()
+		balance = d.get_balance(6)
+		amount_to_send = balance - Decimal(str(FORWARDING_KEEP_LOCAL))
+		if( Decimal(str(FORWARDING_KEEP_LOCAL)) <= Decimal(str(FORWARDING_MINIMUM)) ) :
+			if( balance > Decimal(str(FORWARDING_MINIMUM)) and len(FORWARDING_ADDRESS) > 0) :
+				if( d.send(FORWARDING_ADDRESS,amount_to_send) ) :
+					logger.info("Forwarded " + str(amount_to_send) + " to address: " + FORWARDING_ADDRESS)
+		else :
+			logger.warning("FORWARDING_KEEP_LOCAL is more than FORWARDING_MINIMUM so no funds will be sent")		
 
-		#sleep(REFRESH_PERIOD)
+		sleep(REFRESH_PERIOD)

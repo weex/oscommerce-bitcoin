@@ -22,10 +22,7 @@
 
   require(DIR_WS_CLASSES . 'payment.php');
 
-
   $parameters = array();
-
-
 
   foreach ($_POST as $key => $value) {
 
@@ -53,41 +50,30 @@
 
 
   // Put some code in here that checks the Bitcoin Payment Notification Key 
-  // posted to us (must be saved in python script's settings.py)
+  // (must be saved in python script's settings.py)
   $bpn_key_query = tep_db_query("select configuration_value from configuration where configuration_key = 'MODULE_PAYMENT_BITCOIN_NOTIFICATION_KEY'");
 
   $bpn_key_array = tep_db_fetch_array($bpn_key_query);
 
   $bpn_key = $bpn_key_array['configuration_value'];
   
-  if ( $parameters['bpn_key'] == $bpn_key ) 
-	$result = "VERIFIED";
-  else
-	exit;
-
-  switch ( $result ) {
-
-    case 'VERIFIED':
+  if ( $parameters['bpn_key'] == $bpn_key ) { 
 
       $result = 'Verified';
 
       $send_debug_email = false;
 
-      break;
-
-    default:
+  } else {
 
       $result = 'Invalid';
 
       $send_debug_email = true;
 
-      break;
-
   }
 
-  
 
-  $txn_id = ( isset($_POST['parent_txn_id']) ? $_POST['parent_txn_id'] : (isset($_POST['orders_id']) ? $_POST['orders_id'] : '' ));
+
+  $txn_id = ( isset($_POST['orders_id']) ? $_POST['orders_id'] : '');
 
   if (!empty( $txn_id ) && preg_match('/^[a-z0-9]+$/i', $txn_id)) {
 
@@ -113,72 +99,43 @@
 
       $total = tep_db_fetch_array($total_query);
 
-
-
-      if ( ($_POST['payment_status'] == 'Reversed') || ($_POST['payment_status'] == 'Refunded') ) {
-
-        $comment_status .= ", reason: " . $_POST['reason_code'];
-
-      } else {
-
-        if ($_POST['payment_status'] == 'Pending') {
-
-        $comment_status .= ", reason: " . $_POST['pending_reason'];
-
-        }
-
-        $comment_status .= " (PayPal account:" . ucfirst($_POST['payer_status']);
-
-      }
-
-#      $comment_status .= "; " . $_POST['mc_currency'] . " " . $_POST['mc_gross'] . ")";
-
-
-
       $order_status_id = DEFAULT_ORDERS_STATUS_ID;
 
-      if(1) {
-        $orders_statuses = array();
+      $orders_statuses = array();
 
-        $orders_status_array = array();
+      $orders_status_array = array();
 
-        $orders_status_query = tep_db_query("select orders_status_id, orders_status_name from " . TABLE_ORDERS_STATUS . " where language_id = '" . (int)$language_id . "'");
+      $orders_status_query = tep_db_query("select orders_status_id, orders_status_name from " . TABLE_ORDERS_STATUS . " where language_id = '" . (int)$language_id . "'");
 
-        while ($orders_status = tep_db_fetch_array($orders_status_query)) {
+      while ($orders_status = tep_db_fetch_array($orders_status_query)) {
 
-          $orders_statuses[] = array('id' => $orders_status['orders_status_id'],
+        $orders_statuses[] = array('id' => $orders_status['orders_status_id'],
 
-                                     'text' => $orders_status['orders_status_name']);
+                                   'text' => $orders_status['orders_status_name']);
 
-          $orders_status_array[$orders_status['orders_status_id']] = $orders_status['orders_status_name'];
+        $orders_status_array[$orders_status['orders_status_id']] = $orders_status['orders_status_name'];
 
-        }
+      }
 
         
 
-        $email = STORE_NAME . "\n" .
+      $email = STORE_NAME . "\n" .
 
-                 EMAIL_SEPARATOR . "\n" .
+               EMAIL_SEPARATOR . "\n" .
 
-                 EMAIL_TEXT_ORDER_NUMBER . ' ' . $order_id . "\n" .
+               EMAIL_TEXT_ORDER_NUMBER . ' ' . $order_id . "\n" .
 
-                 EMAIL_TEXT_INVOICE_URL . ' ' . tep_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $order_id, 'SSL', false, false) . "\n" .
+               EMAIL_TEXT_INVOICE_URL . ' ' . tep_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $order_id, 'SSL', false, false) . "\n" .
 
-                 EMAIL_TEXT_DATE_ORDERED . ' ' . tep_date_long($order['date_purchased']) . "\n\n" . sprintf(EMAIL_TEXT_STATUS_UPDATE, $orders_status_array[$order_status_id]);
+               EMAIL_TEXT_DATE_ORDERED . ' ' . tep_date_long($order['date_purchased']) . "\n\n" . sprintf(EMAIL_TEXT_STATUS_UPDATE, $orders_status_array[$order_status_id]);
 
-        tep_mail($order['customers_name'], $order['customers_email_address'], EMAIL_TEXT_SUBJECT, $email, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS);
+      tep_mail($order['customers_name'], $order['customers_email_address'], EMAIL_TEXT_SUBJECT, $email, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS);
 
 
 
-        $customer_notified = '1'; 
+      $customer_notified = '1'; 
 
 // Customer notification email ends here ***************************************
-
-      } else {
-
-        $customer_notified = '0';
-
-      }
 
       $order_status_id = 3; # 3 = Delivered
 
@@ -194,7 +151,6 @@
 
       tep_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 
-
       tep_db_query("update " . TABLE_ORDERS . " set orders_status = '" . $order_status_id . "', last_modified = now() where orders_id = '" . (int)$order_id . "'");
 
     }
@@ -207,7 +163,7 @@
 
 ////******** Invalid transaction ID, send out debug email
 
-  if ($send_debug_email && trim(MODULE_PAYMENT_PAYPAL_EC_DEBUG_EMAIL) != '' ) {
+  if ($send_debug_email && trim(MODULE_PAYMENT_BITCOIN_DEBUG_EMAIL) != '' ) {
 
     $email_body = '$_POST:' . "\n\n";
 
@@ -225,7 +181,7 @@
 
     }
 
-    tep_mail(STORE_OWNER, MODULE_PAYMENT_PAYPAL_EC_DEBUG_EMAIL, 'PayPal Express Checkout IPN Invalid Response', $email_body, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS);
+    tep_mail(STORE_OWNER, MODULE_PAYMENT_BITCOIN_DEBUG_EMAIL, 'osCommerce Bitcoin: Invalid Request to bpn.php', $email_body, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS);
 
   }
 
