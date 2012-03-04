@@ -4,12 +4,16 @@
 #  settings.py - settings for simple merchant script 
 #
 
-#  OS Commerce database information
+#  osCommerce database information
 DBHOST = 'localhost'
 DBUSER = ''
 DBPASSWD = ''
 DBNAME = 'oscommerce'
 
+#  url to osCommerce installation without trailing slash, https is STRONGLY ENCOURAGED
+#  if this script will be sending requests across untrusted network connections
+#  (i.e. the Internet)
+OSC_URL = 'http://localhost/oscommerce/catalog'
 
 #  If a forwarding address is set, the script will send all bitcoins to
 #  this address once 6 confirmations have elapsed.

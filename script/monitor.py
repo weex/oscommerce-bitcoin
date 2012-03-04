@@ -124,7 +124,7 @@ class Sales :
 					if( d.get_receivedbyaddress(address,0) >= total ):
 						# ping bpn.php which should be via ssl or through the same server
 						
-						url = 'http://localhost/oscommerce/catalog/ext/modules/payment/bpn.php'
+						url = OSC_URL + '/ext/modules/payment/bitcoin/bpn.php'
 						values = {'bpn_key' : notification_key ,
 							  'orders_id' : order['orders_id'] }
 						data = urllib.urlencode(values)

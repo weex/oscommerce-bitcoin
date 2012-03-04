@@ -22,9 +22,6 @@
 
   require(DIR_WS_CLASSES . 'payment.php');
 
-#  $payment_modules = new payment(paypal_ec);
-
-
 
   $parameters = array();
 
@@ -56,7 +53,7 @@
 
 
   // Put some code in here that checks the Bitcoin Payment Notification Key 
-  // (must be saved in python script's settings.py)
+  // posted to us (must be saved in python script's settings.py)
   $bpn_key_query = tep_db_query("select configuration_value from configuration where configuration_key = 'MODULE_PAYMENT_BITCOIN_NOTIFICATION_KEY'");
 
   $bpn_key_array = tep_db_fetch_array($bpn_key_query);
@@ -115,12 +112,6 @@
       $total_query = tep_db_query("select value from " . TABLE_ORDERS_TOTAL . " where orders_id = '" . (int)$order_id . "' and class = 'ot_total' limit 1");
 
       $total = tep_db_fetch_array($total_query);
-
-
-
-      
-
-      $comment_status = "[" . $_POST['payment_status'];
 
 
 
