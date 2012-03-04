@@ -24,8 +24,16 @@ Installation:
 
 3. Fill in bitcoind RPC host:port, user, and password
 
-4. Create BTC currency in osCommerce administration -> Localization -> Currencies and enter # of 
+4. Create BTC currency in osCommerce administration -> Localization -> Currencies with the following settings. For Value enter # of 
 BTC a USD would buy you.
+
+Title: Bitcoin
+Code: BTC
+Symbol Left:
+Symbol Right: BTC
+Decimal Point: .
+Thousands Point: ,
+Decimal Places: 3
 
 5. Move ./script folder to your preferred location for Python scripts (preferably outside the web root)
 
