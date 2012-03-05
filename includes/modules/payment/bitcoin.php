@@ -1,9 +1,12 @@
 <?php
-/*******************************************************************************
- *
- * Bitcoin Payment Module
- *
- ******************************************************************************/
+/* 
+  osCommerce Bitcoin Payment Module
+ 
+  Copyright (c) 2012 David Sterry
+
+  Released under the GNU General Public License
+
+*/
   class bitcoin {
     var $code, $title, $description, $enabled;
 

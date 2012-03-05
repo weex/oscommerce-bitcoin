@@ -3,14 +3,13 @@
 /*
 
   $Id: ipn.php,v 0.4.1.0 beta 2007/02/18 07:08:00 Alex Li Exp $
-
-
-
   Copyright (c) 2007 AlexStudio
 
-  Released under the GNU General Public License
+  osCommerce Bitcoin Payment Module 
+  bpn.php
+  Copyright (c) 2012 David Sterry
 
-    
+  Released under the GNU General Public License
 
 */
 
