@@ -4,11 +4,14 @@ This module enables your osCommerce webstore to accept Bitcoin.
 
 Features:
 
-* Bitcoind and monitor.py can be run on a server other than the osCommerce hosting server
+
 * Creates a unique payment address for each order
-* Updates order to Delivered when payment is received (# of confirmations is configurable)
-* Forwards Bitcoins to forwarding address once the local bitcoind has more than a threshold amount
-* Python script monitors bitcoind and will restart it if it becomes unresponsive
+* Automatically updates BTCUSD exchange rate
+* Updates order to Processing when payment is received (# of confirmations is configurable)
+* Forwards Bitcoins to forwarding address
+* Python script restarts bitcoind it if it becomes unresponsive
+* Bitcoind and monitor.py can be run on a server other than the osCommerce hosting server
+
 
 Requirements:
 
@@ -22,7 +25,7 @@ Installation:
 
 2. Enable Bitcoin Payment module
 
-3. Fill in bitcoind RPC host:port, user, and password
+3. Fill in bitcoind RPC host:port, user, password, and create a random notification key
 
 4. Create BTC currency in osCommerce administration -> Localization -> Currencies with the following settings. For Value enter # of 
 BTC a USD would buy you.
@@ -49,7 +52,6 @@ You can 'tail -f ./scripts/monitor.log' to follow what the monitor script is doi
 
 Todo:
 
-* Include BTCUSD exchange rate update in python script
 * Include a watchdog script to make sure monitor.py is running via cronjob.
 
 Inspired by http://addons.oscommerce.com/info/8170 by phoenix.x742 / 2 Oct 2011
