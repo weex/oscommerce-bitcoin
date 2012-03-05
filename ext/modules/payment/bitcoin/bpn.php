@@ -137,7 +137,8 @@
 
 // Customer notification email ends here ***************************************
 
-      $order_status_id = 3; # 3 = Delivered
+      $order_status_id = 2; # 2 = Processing in a fresh osCommerce install
+      #$order_status_id = 3; # 3 = Delivered in a fresh osCommerce install
 
       $sql_data_array = array('orders_id' => (int)$order_id,
 

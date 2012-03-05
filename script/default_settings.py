@@ -4,10 +4,10 @@
 #  settings.py - settings for simple merchant script 
 #
 
-#  The path to the script without trailing slash
+#  The path to the script with trailing slash
 #    for example monitor.py would be at /path/to/this/script/monitor.py
-#    if BASE_PATH = "/path/to/this/script"
-BASE_PATH = "/path/to/this/script"   
+#    if BASE_PATH = "/path/to/this/script/"
+BASE_PATH = "/path/to/this/script/"   
 
 
 #
@@ -37,6 +37,11 @@ MINCONF = 6
 #  With each confirmation taking on average 10 minutes, settings this to
 #  MINCONF * 150 is reasonable (25% of expected confirmation time).
 REFRESH_PERIOD = 900
+
+#  How often to update exchange rate as a multiple of REFRESH_PERIOD. For 
+#  example, if REFRESH_PERIOD is 900 (15 minutes), setting this to 4 will
+#  cause the exchange rate to be updated hourly.
+REFRESHES_TO_UPDATE_PRICE = 4
 
 #  If a forwarding address is set, the script will send all bitcoins to
 #  this address once 6 confirmations have elapsed.

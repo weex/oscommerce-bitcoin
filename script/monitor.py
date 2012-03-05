@@ -15,12 +15,10 @@ import simplejson as json
 # our configuration file - copy defaultsettings.py to settings.py and edit
 from settings import * 
 
-BASE_PATH = '/home/dsterry/code/osCommerce-Bitcoin-Payment-Module/script'
-
 # setup logging
 import logging
 logger = logging.getLogger('osc-bitcoin-monitor')
-hdlr = logging.FileHandler(BASE_PATH+'/monitor.log')
+hdlr = logging.FileHandler(BASE_PATH+'monitor.log')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 hdlr.setFormatter(formatter)
 logger.addHandler(hdlr) 
@@ -149,6 +147,7 @@ if __name__ == "__main__":
 
 	d = Daemon()
 	s = Sales()
+	refreshcount = 0
 	while(1):
 		d.check()
 
@@ -164,4 +163,39 @@ if __name__ == "__main__":
 		else :
 			logger.warning("FORWARDING_KEEP_LOCAL is more than FORWARDING_MINIMUM so no funds will be sent")		
 
+		# update exchange rate trying mtgox first then bitcoinexchangerate.org
+		if( refreshcount % REFRESHES_TO_UPDATE_PRICE == 0 ) :
+			url = 'https://mtgox.com/code/data/ticker.php'
+			try: 
+				page = urllib2.urlopen(url)
+				page_string = page.read()
+				x = json.loads(page_string)
+				if x:
+					btcusd_rate = Decimal(str(x['ticker']['last_all']))
+					usdbtc_rate = Decimal(1) / btcusd_rate
+        	        		db = MySQLdb.connect(host = DBHOST,user = DBUSER,passwd = DBPASSWD,db = DBNAME)
+					c = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+					c.execute("UPDATE currencies set value = %f where code = 'BTC'" % ( usdbtc_rate,))
+					logger.info("Updated (mtgox) USDBTC to " + str(usdbtc_rate) + " ( BTCUSD = " + str(btcusd_rate) + " )")		
+					db.close()
+			except urllib2.URLError, e:
+				print(e.reason)
+			
+				url = 'http://bitcoinexchangerate.org/price'
+				try: 
+					page = urllib2.urlopen(url)
+					page_string = page.read()
+					x = re.search(r"\d+\.\d+",page_string)
+					if x:
+						btcusd_rate = Decimal(str(x.group()))
+						usdbtc_rate = Decimal(1) / btcusd_rate
+        	        			db = MySQLdb.connect(host = DBHOST,user = DBUSER,passwd = DBPASSWD,db = DBNAME)
+						c = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+						c.execute("UPDATE currencies set value = %f where code = 'BTC'" % ( usdbtc_rate,))
+						logger.info("Updated (bitcoinexchangerate.org) USDBTC to " + str(usdbtc_rate) + " ( BTCUSD = " + str(btcusd_rate) + " )")		
+						db.close()
+				except urllib2.URLError, e:
+					print(e.reason)				
+
+		refreshcount = refreshcount + 1
 		sleep(REFRESH_PERIOD)
