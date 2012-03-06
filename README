@@ -42,7 +42,7 @@ Decimal Places: 3
 
 6. Copy ./script/default_settings.py to ./script/settings.py and configure at least BASE_PATH and OSC_URL
 
-7. Make sure bitcoind is running and has an rpcuser and rpcpassword set in .bitcoin/bitcoin.conf
+7. Make sure bitcoind is running, is in the path, and has an rpcuser and rpcpassword set in .bitcoin/bitcoin.conf
 
 8. Start monitor.py:
 
