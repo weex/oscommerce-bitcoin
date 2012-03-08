@@ -172,7 +172,7 @@ if __name__ == "__main__":
 		s.enter_deposits()
 
 		balance = d.get_balance(6)
-		amount_to_send = balance - Decimal(str(FORWARDING_KEEP_LOCAL))
+		amount_to_send = balance - Decimal(str(FORWARDING_KEEP_LOCAL)) - Decimal(str(TRANSACTION_FEE))
 		if( Decimal(str(FORWARDING_KEEP_LOCAL)) <= Decimal(str(FORWARDING_MINIMUM)) ) :
 			if( balance > Decimal(str(FORWARDING_MINIMUM)) and len(FORWARDING_ADDRESS) > 0) :
 				if( d.send(FORWARDING_ADDRESS,amount_to_send) ) :
