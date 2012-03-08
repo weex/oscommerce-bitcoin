@@ -2,8 +2,10 @@ osCommerce Bitcoin Payment Module v0.6
 
 This module enables your osCommerce webstore to accept Bitcoin. 
 
-Features:
+IMPORTANT: This module is currently under development and works with BTC as the default currency only.
 
+
+Features:
 
 * Creates a unique payment address for each order
 * Automatically updates BTCUSD exchange rate
@@ -37,6 +39,8 @@ Symbol Right: BTC
 Decimal Point: .
 Thousands Point: ,
 Decimal Places: 3
+
+5. Optionally install the Display Totals in Default Currency addon from http://www.oscommerce.com/community/contributions,3333 with the modificationsn listed in this post: https://bitcointalk.org/index.php?topic=67166.msg791064#msg791064
 
 5. Move ./script folder to your preferred location for Python scripts (preferably outside the web root)
 
