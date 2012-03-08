@@ -52,3 +52,6 @@ FORWARDING_MINIMUM = 1
 
 #  Leave this amount on this machine
 FORWARDING_KEEP_LOCAL = 0
+
+#  The transaction fee specified in your bitcoin settings
+TRANSACTION_FEE = 0
