@@ -40,9 +40,9 @@ Decimal Point: .
 Thousands Point: ,
 Decimal Places: 3
 
-5. Optionally install the Display Totals in Default Currency addon from http://www.oscommerce.com/community/contributions,3333 with the modificationsn listed in this post: https://bitcointalk.org/index.php?topic=67166.msg791064#msg791064
+5. Recommended: Install the Display Totals in Default Currency addon from http://www.oscommerce.com/community/contributions,3333 and make the modifications listed in this post: https://bitcointalk.org/index.php?topic=67166.msg791064#msg791064
 
-5. Move ./script folder to your preferred location for Python scripts (preferably outside the web root)
+6. Move ./script folder to your preferred location for Python scripts (preferably outside the web root)
 
 6. Copy ./script/default_settings.py to ./script/settings.py and configure at least BASE_PATH and OSC_URL
 
