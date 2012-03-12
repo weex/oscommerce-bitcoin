@@ -50,7 +50,7 @@
   $global = tep_db_fetch_array($global_query);
 
   if ($global['global_product_notifications'] != '1') {
-    $orders_query = tep_db_query("select orders_id from " . TABLE_ORDERS . " where customers_id = '" . (int)$customer_id . "' order by date_purchased desc limit 1");
+    $orders_query = tep_db_query("select * from " . TABLE_ORDERS . " where customers_id = '" . (int)$customer_id . "' order by date_purchased desc limit 1");
     $orders = tep_db_fetch_array($orders_query);
 
     $products_array = array();
@@ -70,7 +70,17 @@
 
 <div class="contentContainer">
   <div class="contentText">
+    <?php 
+	if( $orders['payment_method'] == "Bitcoin Payment" ) {
+    		$amount_query = tep_db_query("select text from " . TABLE_ORDERS_TOTAL . " where orders_id = '" . (int)$orders['orders_id'] . "' and class = 'ot_total'");
+    		$payment_amount = tep_db_fetch_array($amount_query);
+    		$payment_address_query = tep_db_query("select comments from " . TABLE_ORDERS_STATUS_HISTORY . " where orders_id = '" . (int)$orders['orders_id'] . "'");
+    		$payment_address = tep_db_fetch_array($payment_address_query);
+		echo "To complete your order please  send " . $payment_amount['text']. " to " . $payment_address['comments'] . "<br /><br />";
+	}
+    ?>
     <?php echo TEXT_SUCCESS; ?>
+
   </div>
 
   <div class="contentText">

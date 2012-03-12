@@ -74,8 +74,6 @@
     function confirmation() {
       //Here we will generate a new payment address and any other related tasks
       global $order;
-      
-      $order->info['bitcoin_checkout_key'] = tep_create_random_value(32);
 
       require_once 'bitcoin/jsonRPCClient.php';
 
@@ -88,11 +86,10 @@
         return $confirmation;
       }
 		
-      $address = $bitcoin->getaccountaddress($order->customer['email_address'].'-'.$order->info['bitcoin_checkout_key']);
       $confirmation = array('title' => '');
       $confirmation['fields'] 
           = array(
-                array('title'=>'Payment Address', 'field'=>'<div><br />Please send payment to this address after confirming your order. You will receive this address and the total amount in the order confirmation email:<hr> '.$address.'</div> <hr>'));
+                array('title'=>'Instructions', 'field'=>'<div>Please send payment to the adddress shown after you confirm your order.</div> <hr>'));
 		
       return $confirmation;
     }
@@ -103,7 +100,7 @@
 
     function before_process() {
       global $insert_id, $order;
-      $address = $order->customer['email_address'].'-'.$order->info['bitcoin_checkout_key'];
+      $address = $order->customer['email_address'].'-'.tep_create_random_value(32);
 
       require_once 'bitcoin/jsonRPCClient.php';
 
