@@ -76,7 +76,13 @@
     		$payment_amount = tep_db_fetch_array($amount_query);
     		$payment_address_query = tep_db_query("select comments from " . TABLE_ORDERS_STATUS_HISTORY . " where orders_id = '" . (int)$orders['orders_id'] . "'");
     		$payment_address = tep_db_fetch_array($payment_address_query);
-		echo "To complete your order please  send " . $payment_amount['text']. " to " . $payment_address['comments'] . "<br /><br />";
+		preg_match('/(1[0-9a-zA-Z]{25,})/s',$payment_address['comments'],&$matches);
+                if( $matches[0] ) {
+                        $payment_address = $matches[0];
+                } else {
+                        $payment_address = "(Error: please check your invoice under My Accounts for the payment address)";
+                }
+                echo "To complete your order please send " . $payment_amount['text']. " to " . $payment_address . "<br /><br />";
 	}
     ?>
     <?php echo TEXT_SUCCESS; ?>
