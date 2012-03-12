@@ -9,9 +9,9 @@ Features:
 
 * Creates a unique payment address for each order
 * Automatically updates BTCUSD exchange rate
-* Updates order to Processing when payment is received (# of confirmations is configurable)
-* Forwards Bitcoins to forwarding address
-* Python script restarts bitcoind it if it becomes unresponsive
+* Updates order to Processing when payment is received (# of Bitcoin network confirmations is configurable)
+* Forwards excess bitcoins to your off-server forwarding address
+* Python script restarts bitcoind if it becomes unresponsive
 * Bitcoind and monitor.py can be run on a server other than the osCommerce hosting server
 
 
@@ -21,16 +21,19 @@ osCommerce (tested so far only with v2.3.1)
 Python with modules: MySQLdb and simplejson
 bitcoind
 
+
 Installation:
 
-1. Copy all files into your osCommerce installation
+1. Copy all files into your osCommerce installation (the checkout_success.php replaces 
+the existing one so if you or any addons have modified that page, you'll want to merge 
+our changes).
 
 2. Enable Bitcoin Payment module
 
 3. Fill in bitcoind RPC host:port, user, password, and create a random notification key
 
-4. Create BTC currency in osCommerce administration -> Localization -> Currencies with the following settings. For Value enter # of 
-BTC a USD would buy you.
+4. Create BTC currency in osCommerce administration -> Localization -> Currencies with 
+the following settings. For Value enter # of BTC a USD would buy you.
 
 Title: Bitcoin
 Code: BTC
@@ -40,13 +43,18 @@ Decimal Point: .
 Thousands Point: ,
 Decimal Places: 3
 
-5. Recommended: Install the Display Totals in Default Currency addon from http://www.oscommerce.com/community/contributions,3333 and make the modifications listed in this post: https://bitcointalk.org/index.php?topic=67166.msg791064#msg791064
+5. Recommended: Install the Display Totals in Default Currency addon from 
+http://www.oscommerce.com/community/contributions,3333 and make the modifications 
+listed in this post: https://bitcointalk.org/index.php?topic=67166.msg791064#msg791064
 
-6. Move ./script folder to your preferred location for Python scripts (preferably outside the web root)
+6. Move ./script folder to your preferred location for Python scripts (preferably 
+outside the web root)
 
-6. Copy ./script/default_settings.py to ./script/settings.py and configure at least BASE_PATH and OSC_URL
+6. Copy ./script/default_settings.py to ./script/settings.py and configure at least 
+BASE_PATH and OSC_URL
 
-7. Make sure bitcoind is running, is in the path, and has an rpcuser and rpcpassword set in .bitcoin/bitcoin.conf
+7. Make sure bitcoind is running, is in the path, and has an rpcuser and rpcpassword set 
+in .bitcoin/bitcoin.conf
 
 8. Start monitor.py:
 
