@@ -53,6 +53,7 @@ class Daemon :
 		io = p.communicate()[0]
 		if io.strip() != 'false':
 			os.system("kill -9 `ps -ef | grep bitcoind | grep -v grep | awk '{print $2}'`")
+			sleep(30)   # give bitcoind time to die
 			os.system("bitcoind &")
 			logger.warning('Restarted bitcoind')
 			sleep(300)  # wait a bit on the long side for more reliability
