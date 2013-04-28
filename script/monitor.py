@@ -53,6 +53,7 @@ class Daemon :
 		io = p.communicate()[0]
 		if io.strip() != 'false':
 			os.system("kill -9 `ps -ef | grep bitcoind | grep -v grep | awk '{print $2}'`")
+			sleep(30)   # give bitcoind time to die
 			os.system("bitcoind &")
 			logger.warning('Restarted bitcoind')
 			sleep(300)  # wait a bit on the long side for more reliability
@@ -182,13 +183,13 @@ if __name__ == "__main__":
 
 		# update exchange rate trying mtgox first then bitcoinexchangerate.org
 		if( refreshcount % REFRESHES_TO_UPDATE_PRICE == 0 ) :
-			url = 'https://mtgox.com/code/data/ticker.php'
+			url = 'https://data.mtgox.com/api/2/BTCUSD/money/ticker'
 			try: 
 				page = urllib2.urlopen(url)
 				page_string = page.read()
 				x = json.loads(page_string)
 				if x:
-					btcusd_rate = Decimal(str(x['ticker']['last_all']))
+					btcusd_rate = Decimal(str(x['data']['last_all']['value']))
 					usdbtc_rate = Decimal(1) / btcusd_rate
         	        		db = MySQLdb.connect(host = DBHOST,user = DBUSER,passwd = DBPASSWD,db = DBNAME)
 					c = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
@@ -216,3 +217,4 @@ if __name__ == "__main__":
 
 		refreshcount = refreshcount + 1
 		sleep(REFRESH_PERIOD)
+
